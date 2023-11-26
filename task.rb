@@ -27,7 +27,6 @@ class ValidationRuleDSL
       type: :presence,
       message: message
     }
-    puts @rules.last.conditions.last[:type].class
   end
 
   def length(options)
@@ -49,6 +48,18 @@ class ValidationRuleDSL
     @rules
   end
 
+end
+
+def object_to_hash(obj)
+  data = {}
+
+  obj.instance_variables.each do |var|
+    key = var.to_s.delete('@').to_sym
+    value = obj.instance_variable_get(var)
+    data[key] = value
+  end
+
+  data
 end
 
 # validation_rules = ValidationRuleDSL.new
