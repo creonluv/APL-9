@@ -7,10 +7,17 @@ class DataValidator
   end
 
   def validate_data(data)
-    data.each do |attribute, value|
-      rule = find_rule(attribute)
-      validate_attribute(rule, value) if rule
+    is_valid = true
+    begin
+      data.each do |attribute, value|
+        rule = find_rule(attribute)
+        validate_attribute(rule, value) if rule
+      end
+    rescue => e
+      puts e.message
+      is_valid = false
     end
+    is_valid
   end
 
   private
@@ -29,13 +36,15 @@ class DataValidator
         validate_length(rule.attribute, value, condition[:options])
       when :numericality
         validate_numericality(rule.attribute, value, condition[:options])
+      else
+        puts"There is no such type of condition"
       end
     end
   end
 
   def validate_presence(attribute, value, message)
     puts "Validating presence for #{attribute}: #{value}"
-    puts "Error: #{message}" if value.nil? || value.to_s.empty?
+    puts "Error!!!: #{message}" if value.nil? || value.to_s.empty?
   end
 
   def validate_length(attribute, value, options)
@@ -47,12 +56,15 @@ class DataValidator
 
   def validate_numericality(attribute, value, options)
     puts "Validating numericality for #{attribute}: #{value}"
-    if options[:greater_than_or_equal_to] && value.to_i < options[:greater_than_or_equal_to]
-      puts "Error: Value should be greater than or equal to #{options[:greater_than_or_equal_to]}"
+    # if options[:greater_than_or_equal_to] && value.to_i < options[:greater_than_or_equal_to]
+    if value.to_i < options[:minimum] || value.to_i >= options[:maximum]
+      raise ArgumentError, "Error: Value should be between #{options[:minimum]} and #{options[:maximum]}. Real value was #{value}"
+      # puts "Error: Value should be greater than or equal to #{options[:minimum]}"
     end
-    if options[:less_than] && value.to_i >= options[:less_than]
-      puts "Error: Value should be less than #{options[:less_than]}"
-    end
+    # # if options[:less_than] && value.to_i >= options[:less_than]
+    # if
+    #   puts "Error: Value should be less than #{options[:maximum]}"
+    # end
   end
 end
 
@@ -69,12 +81,13 @@ validation_rules.validate(:email) do
 end
 
 validation_rules.validate(:age) do
-  numericality greater_than_or_equal_to: 18, less_than: 100
+  numericality minimum: 18, maximum: 100
 end
 
 rules = validation_rules.generate
 #
 validator = DataValidator.new(rules)
+
 data_to_validate = {
   username: "JohnDoe",
   email: "john.doe@example.com",
@@ -82,4 +95,5 @@ data_to_validate = {
   age: 25
 }
 
-validator.validate_data(data_to_validate)
+is_valid = validator.validate_data(data_to_validate)
+puts "Is valid? -> #{is_valid}"

@@ -27,7 +27,6 @@ class ValidationRuleDSL
       type: :presence,
       message: message
     }
-    puts @rules.last.conditions.last[:type].class
   end
 
   def length(options)
