@@ -1,4 +1,4 @@
-require_relative 'rules_validator'
+require_relative 'rules_creator'
 
 class DataValidator
 
@@ -48,9 +48,38 @@ class DataValidator
     end
   end
 
-  def validate_numericality(attribute, value, options, message)
-    puts "\tValidating numericality for #{attribute}: #{value}"
+  def validate_in_range(attribute, value, options, message)
+    puts "\tValidating in_range for #{attribute}: #{value}"
     if value.to_i < options[:minimum] || value.to_i >= options[:maximum]
+      raise ArgumentError, message
+    end
+  end
+
+  def validate_at_sign(attribute, value, options, message)
+    puts "\tValidating '@' sign for #{attribute}: #{value}"
+    unless value.to_s.include?('@')
+      raise ArgumentError, message
+    end
+  end
+
+  def validate_lowercase(attribute, value, options, message)
+    puts "\tValidating full lowercase for #{attribute}: #{value}"
+    unless value.to_s.downcase == value.to_s
+      raise ArgumentError, message
+    end
+  end
+
+  def validate_without_whitespaces(attribute, value, options, message)
+    puts "\tValidating not contains whitespaces for #{attribute}: #{value}"
+    if value.to_s.match(/\s/)
+      raise ArgumentError, message
+    end
+  end
+
+  def validate_without_spec_chars(attribute, value, options, message)
+    puts "\tValidating not contains not allowed special characters for #{attribute}: #{value}"
+    regex = /[!#\$%\^&\*\(\)\+\-=\[\]\{\};:'"\|,<>\/?\\]/
+    if value.to_s.match(regex)
       raise ArgumentError, message
     end
   end
@@ -59,7 +88,11 @@ class DataValidator
     @validation_methods ||= {
       presence: method(:validate_presence),
       length: method(:validate_length),
-      numericality: method(:validate_numericality)
+      in_range: method(:validate_in_range),
+      at_sign: method(:validate_at_sign),
+      lowercase: method(:validate_lowercase),
+      without_whitespaces: method(:validate_without_whitespaces),
+      without_spec_chars: method(:validate_without_spec_chars)
     }
   end
 

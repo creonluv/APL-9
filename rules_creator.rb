@@ -38,9 +38,25 @@ class ValidationRulesRepository
     put_conditions_in_rule(rule, :length, options, message)
   end
 
-  def numericality(rule: @current_rule,  **options)
+  def in_range(rule: @current_rule, **options)
     message = "Error: Value should be between #{options[:minimum]} and #{options[:maximum]}."
-    put_conditions_in_rule(rule, :numericality, options, message)
+    put_conditions_in_rule(rule, :in_range, options, message)
+  end
+
+  def at_sign(message: nil)
+    put_conditions_in_rule(@current_rule, :at_sign, nil, message)
+  end
+
+  def lowercase(message: nil)
+    put_conditions_in_rule(@current_rule, :lowercase, nil, message)
+  end
+
+  def without_whitespaces(message: nil)
+    put_conditions_in_rule(@current_rule, :without_whitespaces, nil, message)
+  end
+
+  def without_spec_chars(message: nil)
+    put_conditions_in_rule(@current_rule, :without_spec_chars, nil, message)
   end
 
   def put_conditions_in_rule(rule, type, options, message)
