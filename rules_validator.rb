@@ -11,7 +11,7 @@ class Rule
   end
 end
 
-class ValidationRuleDSL
+class ValidationRulesRepository
   attr_accessor :rules
 
   def initialize
@@ -22,10 +22,10 @@ class ValidationRuleDSL
   def add_validation_rule(attribute, &block)
     @current_rule = find_rule(attribute)
     if @current_rule.nil?
-      @rules << Rule.new(attribute)
-      @current_rule = @rules.last
+      rule = Rule.new(attribute)
+      @rules << rule
+      @current_rule = rule
     end
-
     instance_eval(&block)
   end
 

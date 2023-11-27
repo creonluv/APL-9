@@ -36,22 +36,6 @@ class DataValidator
     end
   end
 
-  # def validate_attribute(rule, value)
-  #   puts "Validating #{rule.attribute} with value: #{value}"
-  #   rule.conditions.each do |condition|
-  #     case condition[:type]
-  #     when :presence
-  #       validate_presence(rule.attribute, value, condition[:options], condition[:message])
-  #     when :length
-  #       validate_length(rule.attribute, value, condition[:options], condition[:message])
-  #     when :numericality
-  #       validate_numericality(rule.attribute, value, condition[:options], condition[:message])
-  #     else
-  #       puts "There is no such type of condition"
-  #     end
-  #   end
-  # end
-
   def validate_presence(attribute, value, options, message)
     puts "\tValidating presence for #{attribute}: #{value}"
     raise ArgumentError, "Error: #{message}" if value.nil? || value.to_s.empty?
